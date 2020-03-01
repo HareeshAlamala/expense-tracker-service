@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: expense-tracker
+spec:
+  selector:
+    app: expense-tracker
+    tier: expense-tracker-service
+  ports:
+    - protocol: TCP
+      port: 9090
+      nodePort: 30001
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expense-tracker
+spec:
+  selector:
+    matchLabels:
+      app: expense-tracker
+      tier: expense-tracker-service
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: expense-tracker
+        tier: expense-tracker-service
+    spec:
+      containers:
+        - name: expense-tracker
+          image: expenses-tracker:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 9090
